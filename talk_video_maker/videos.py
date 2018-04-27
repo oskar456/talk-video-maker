@@ -421,6 +421,8 @@ def generate_filter_graph(streams):
             "]'": r"\]",
             ",'": r"\,",
             ";'": r"\;",
+            ' ': r'\ ',
+            ',': r'\,',
         }
         pattern = re.compile('|'.join(re.escape(k) for k in d.keys()))
         return pattern.sub(lambda x: d[x.group()], s)
