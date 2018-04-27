@@ -393,6 +393,13 @@ class VideoStream(Stream):
 class AudioStream(Stream):
     type = 'audio'
 
+    def __init__(self, duration=None):
+        super().__init__()
+        self.duration = duration
+
+    def copy(self):
+        return type(self)(duration=self.duration)
+
 
 def gen_names(prefix='', alphabet='abcdefghijklmnopqrstuvwxyz'):
     n = 1
@@ -544,9 +551,11 @@ def filter_movie(filename, stream_specs=None, duration=None, loop=None):
     ]).decode('utf-8'))
     print(info)
     if stream_specs is None:
-        stream_specs = ('dv', )
+        stream_specs = []
+        if any(s['codec_type'] == 'video' for s in info['streams']):
+            stream_specs.append('dv')
         if any(s['codec_type'] == 'audio' for s in info['streams']):
-            stream_specs = ('dv', 'da')
+            stream_specs.append('da')
     args = {'filename': filename, 'streams': '+'.join(stream_specs)}
     if loop:
         args['loop'] = loop
@@ -567,7 +576,19 @@ def filter_movie(filename, stream_specs=None, duration=None, loop=None):
                 s_duration = duration
             outputs.append(VideoStream(size=size, duration=s_duration))
         elif stream_spec == 'da':
-            outputs.append(AudioStream())
+            for sinfo in info['streams']:
+                if sinfo['codec_type'] == 'audio':
+                    break
+            else:
+                raise LookupError('no stream')
+            if duration is None:
+                try:
+                    s_duration = float(sinfo['duration'])
+                except KeyError:
+                    s_duration = float(info['format']['duration'])
+            else:
+                s_duration = duration
+            outputs.append(AudioStream(duration=s_duration))
         else:
             raise ValueError(
                 'stream specification {!r} not implemented'.format(stream_spec))
