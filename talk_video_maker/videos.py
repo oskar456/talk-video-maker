@@ -670,7 +670,7 @@ def generate_silence(duration):
         name='aevalsrc',
         args={'exprs': 0, 'duration': duration},
         inputs=(),
-        outputs=[AudioStream()],
+        outputs=[AudioStream(duration=duration)],
     )
 
 
