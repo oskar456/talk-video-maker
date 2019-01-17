@@ -107,7 +107,7 @@ def draw_graph(streams):
         end = len(passthru)
         yield from shuffle_streams(wanted, end)
         filter_name = filter.name
-        arg_tuples = filter.arg_tuples or (('', ''))
+        arg_tuples = filter.arg_tuples or (('', ''),)
         param_name_size = max(len(n) for n, v in arg_tuples)
         param_value_size = max(len(v) for n, v in arg_tuples)
         port_size = max([len(filter.outputs), len(filter.inputs)])

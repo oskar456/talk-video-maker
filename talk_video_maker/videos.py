@@ -159,6 +159,11 @@ class AVObject(objects.Object):
                 stream.size = width, height
         return AVObject(streams)
 
+    def deinterlaced(self):
+        streams = self.streams
+        streams = filter_streams(streams, {'video'}, 'yadif', {})
+        return AVObject(streams)
+
     def with_audio_offset(self, t):
         streams = self.streams
         if t < 0:

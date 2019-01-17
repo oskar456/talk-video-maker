@@ -50,6 +50,8 @@ def make_pyvo(
         speaker_vid: opts.VideoOption(
             default='*.MTS',
             help='Video file with recording of the speaker'),
+        deinterlace: opts.FlagOption(
+            help='Deinterlace speaker video'),
         speaker: opts.TextOption(help='Name of the speaker'),
         title: opts.TextOption(help='Name of the talk'),
         url: opts.TextOption(help='URL of the talk'),
@@ -139,6 +141,9 @@ def make_pyvo(
 
     last = last | qrcode
     last = last.faded_in(0.5)
+
+    if deinterlace:
+        speaker_vid = speaker_vid.deinterlaced()
 
     if av_offset:
         speaker_vid = speaker_vid.with_video_offset(av_offset)
